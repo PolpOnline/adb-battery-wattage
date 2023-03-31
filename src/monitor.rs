@@ -7,10 +7,10 @@ use uom::si::f64::*;
 use uom::si::power::watt;
 use uom::si::time::millisecond;
 
-use crate::{GET_COMMAND, REFRESH_RATE};
+use crate::{GET_COMMAND};
 
 /// Monitor the battery level and print the power input
-pub fn monitor() {
+pub fn monitor(polling_rate: Time) {
     let mut prev_battery_stats = get_battery_level();
     let mut battery_stats = prev_battery_stats;
     let mut sw = Stopwatch::start_new();
@@ -29,7 +29,7 @@ pub fn monitor() {
             sw.restart();
         }
 
-        sleep(std::time::Duration::from_secs_f64(REFRESH_RATE));
+        sleep(std::time::Duration::from_millis(polling_rate.get::<millisecond>() as u64));
     }
 }
 
