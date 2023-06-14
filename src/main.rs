@@ -1,12 +1,7 @@
 use clap::{command, value_parser, Arg};
 use uom::si::f64::*;
 use uom::si::time::second;
-
-use crate::monitor::monitor;
-
-mod monitor;
-
-pub const GET_COMMAND: &str = "adb shell dumpsys battery";
+use adb_battery_wattage::monitor::monitor;
 
 fn main() {
     let matches = command!()

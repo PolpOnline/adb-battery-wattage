@@ -1,3 +1,4 @@
+use std::ops::Sub;
 use std::thread::sleep;
 
 use stopwatch::Stopwatch;
@@ -7,7 +8,7 @@ use uom::si::f64::*;
 use uom::si::power::watt;
 use uom::si::time::millisecond;
 
-use crate::{GET_COMMAND};
+const GET_COMMAND: &str = "adb shell dumpsys battery";
 
 /// Monitor the battery level and print the power input
 pub fn monitor(polling_rate: Time) {
@@ -15,10 +16,10 @@ pub fn monitor(polling_rate: Time) {
     let mut battery_stats = prev_battery_stats;
     let mut sw = Stopwatch::start_new();
     loop {
-        prev_battery_stats = battery_stats;
+        prev_battery_stats = battery_stats.clone();
         battery_stats = get_battery_level();
 
-        let difference = battery_stats.difference(&prev_battery_stats);
+        let difference = battery_stats.clone() - prev_battery_stats;
 
         if difference.charge != ElectricCharge::new::<microampere_hour>(0f64) {
             let energy = difference.charge * battery_stats.voltage;
@@ -75,14 +76,16 @@ fn get_battery_level() -> BatteryStats {
     battery_stats
 }
 
+#[derive(Clone)]
 struct BatteryStats {
     charge: ElectricCharge,
     voltage: ElectricPotential,
 }
 
-impl BatteryStats {
-    /// Get the difference between two battery stats
-    fn difference(&self, other: &BatteryStats) -> BatteryStats {
+impl Sub for BatteryStats {
+    type Output = BatteryStats;
+
+    fn sub(self, other: BatteryStats) -> BatteryStats {
         BatteryStats {
             charge: self.charge - other.charge,
             voltage: self.voltage - other.voltage,

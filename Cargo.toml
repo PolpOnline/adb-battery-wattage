@@ -12,6 +12,5 @@ clap = { version = "4.3.4", features = ["cargo"] }
 stopwatch = "0.0.7"
 uom = "0.34.0"
 
-
 [profile.release]
 lto = true
