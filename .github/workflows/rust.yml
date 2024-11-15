@@ -12,3 +12,8 @@ jobs:
         run: cargo clippy -- -D warnings
       - name: Build
         run: cargo build --release
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: adb-battery-wattage
+          path: target/release/adb-battery-wattage
