@@ -1,4 +1,4 @@
-name: Rust Clippy
+name: Rust
 
 on: [push, pull_request]
 
