@@ -8,7 +8,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.5.4", features = ["cargo"] }
+clap = { version = "4.5.4", features = ["cargo", "derive"] }
 stopwatch = "0.0.7"
 uom = "0.36.0"
 

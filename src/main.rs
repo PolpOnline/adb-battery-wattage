@@ -1,27 +1,21 @@
 pub mod monitor;
 
-use clap::{command, value_parser, Arg};
+use clap::Parser;
 use uom::si::{f64::*, time::second};
 
 use crate::monitor::monitor;
 
+#[derive(Parser, Debug)]
+struct Args {
+    #[clap(short, long, default_value_t = 0.1)]
+    /// Sets polling rate in seconds (Doesn't change actual Android battery
+    /// stats refresh rate)
+    refresh_rate: f64,
+}
+
 fn main() {
-    let matches = command!()
-        .arg(
-            Arg::new("refresh-rate")
-                .short('r')
-                .long("refresh-rate")
-                .default_value("0.1")
-                .value_parser(value_parser!(f64))
-                .help(
-                    "Sets polling rate in seconds (Doesn't change actual Android battery stats \
-                     refresh rate)",
-                ),
-        )
-        .get_matches();
+    let args = Args::parse();
 
-    let polling_rate = matches.get_one::<f64>("refresh-rate").unwrap_or(&0.1f64);
-
-    let polling_rate = Time::new::<second>(*polling_rate);
+    let polling_rate = Time::new::<second>(args.refresh_rate);
     monitor(polling_rate);
 }
