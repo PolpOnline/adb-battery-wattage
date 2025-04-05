@@ -1,5 +1,6 @@
-use std::{ops::Sub, thread::sleep};
+use std::thread::sleep;
 
+use derive_more::Sub;
 use stopwatch::Stopwatch;
 use uom::si::{
     electric_charge::microampere_hour, electric_potential::millivolt, f64::*, power::watt,
@@ -21,9 +22,10 @@ pub fn monitor(polling_rate: Time) {
 
         if difference.charge != ElectricCharge::new::<microampere_hour>(0f64) {
             let energy = difference.charge * battery_stats.voltage;
-            let charge_power = get_power(energy, &sw);
+            let time = Time::new::<millisecond>(sw.elapsed_ms() as f64);
+            let charge_power = get_power(energy, time);
 
-            println!("Charge power: {:.3}", charge_power.get::<watt>());
+            println!("Charge power: {:.3} W", charge_power.get::<watt>());
 
             sw.restart();
         }
@@ -76,25 +78,13 @@ fn get_battery_level() -> BatteryStats {
     battery_stats
 }
 
-#[derive(Clone)]
+#[derive(Clone, Sub)]
 struct BatteryStats {
     charge: ElectricCharge,
     voltage: ElectricPotential,
 }
 
-impl Sub for BatteryStats {
-    type Output = BatteryStats;
-
-    fn sub(self, other: BatteryStats) -> BatteryStats {
-        BatteryStats {
-            charge: self.charge - other.charge,
-            voltage: self.voltage - other.voltage,
-        }
-    }
-}
-
-/// Get input in W
-fn get_power(energy: Energy, stopwatch: &Stopwatch) -> Power {
-    let elapsed = Time::new::<millisecond>(stopwatch.elapsed_ms() as f64);
-    energy / elapsed
+/// Get power from energy and time
+fn get_power(energy: Energy, time: Time) -> Power {
+    energy / time
 }
