@@ -1,7 +1,9 @@
+pub mod monitor;
+
 use clap::{command, value_parser, Arg};
-use uom::si::f64::*;
-use uom::si::time::second;
-use adb_battery_wattage::monitor::monitor;
+use uom::si::{f64::*, time::second};
+
+use crate::monitor::monitor;
 
 fn main() {
     let matches = command!()
@@ -11,7 +13,10 @@ fn main() {
                 .long("refresh-rate")
                 .default_value("0.1")
                 .value_parser(value_parser!(f64))
-                .help("Sets polling rate in seconds (Doesn't change actual Android battery stats refresh rate)")
+                .help(
+                    "Sets polling rate in seconds (Doesn't change actual Android battery stats \
+                     refresh rate)",
+                ),
         )
         .get_matches();
 

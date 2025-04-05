@@ -1,12 +1,10 @@
-use std::ops::Sub;
-use std::thread::sleep;
+use std::{ops::Sub, thread::sleep};
 
 use stopwatch::Stopwatch;
-use uom::si::electric_charge::microampere_hour;
-use uom::si::electric_potential::millivolt;
-use uom::si::f64::*;
-use uom::si::power::watt;
-use uom::si::time::millisecond;
+use uom::si::{
+    electric_charge::microampere_hour, electric_potential::millivolt, f64::*, power::watt,
+    time::millisecond,
+};
 
 const GET_COMMAND: &str = "adb shell dumpsys battery";
 
@@ -16,7 +14,7 @@ pub fn monitor(polling_rate: Time) {
     let mut battery_stats = prev_battery_stats;
     let mut sw = Stopwatch::start_new();
     loop {
-        prev_battery_stats = battery_stats.clone();
+        prev_battery_stats = battery_stats;
         battery_stats = get_battery_level();
 
         let difference = battery_stats.clone() - prev_battery_stats;
@@ -30,7 +28,9 @@ pub fn monitor(polling_rate: Time) {
             sw.restart();
         }
 
-        sleep(std::time::Duration::from_millis(polling_rate.get::<millisecond>() as u64));
+        sleep(std::time::Duration::from_millis(
+            polling_rate.get::<millisecond>() as u64,
+        ));
     }
 }
 
