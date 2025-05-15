@@ -11,7 +11,7 @@ edition = "2021"
 clap = { version = "4.5.4", features = ["cargo", "derive"] }
 derive_more = { version = "2.0.1", features = ["add"] }
 stopwatch = "0.0.7"
-uom = "0.36.0"
+uom = "0.37.0"
 
 [profile.release]
 lto = true
